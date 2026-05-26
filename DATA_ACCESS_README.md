@@ -2,6 +2,8 @@
 
 Study data and scoring documents are protected and not included here. Only code, documentation, and empty input folders are included.
 
+Contact Kelseanna Hollis-Hansen (kelseanna.hollis-hansen@utsouthwestern.edu) to request data access. Data requests require a data use agreement.
+
 Required local files:
 
 - `inputs/raw/Weight and BMI.xlsx`
