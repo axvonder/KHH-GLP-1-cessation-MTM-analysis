@@ -10,7 +10,7 @@ The pipeline prepares the analytic datasets, fits the study models, creates the 
 
 Study data are not included in this repository.
 
-Running the code requires protected participant-level data files and scoring documents. Approved study-team users should place those files in the local paths listed below before running the pipeline. See [DATA_ACCESS_README.md](DATA_ACCESS_README.md) for the data-access note and complete file list.
+Running the code requires protected participant-level data files and scoring documents. See [DATA_ACCESS_README.md](DATA_ACCESS_README.md) before running the pipeline.
 
 ## Run
 
@@ -30,24 +30,6 @@ The pipeline was last verified with R 4.5.1. Required R packages are:
 
 `webshot2`, `magick`, and `ragg` are used when available for image export.
 
-## Required Local Files
-
-Raw data:
-
-- `inputs/raw/Weight and BMI.xlsx`
-- `inputs/raw/Weight loss while on GLP1.xlsx`
-- `inputs/raw/GLP1 Cessation Support Study Questionnaire Data.xlsx`
-- `weightLogInfo_merged.csv`
-
-Reference files used for scoring and quality control:
-
-- `inputs/reference/MiniEAT user data to model mapping 11-2023.csv`
-- `inputs/reference/NORC_DataDictionary_2026-03-19.csv`
-- `inputs/reference/Mini-EAT scoring algorithm 11-2023 PDF.pdf`
-- `inputs/reference/TAPQ - Treatment Adherence Perception Questionnaire .pdf`
-- `inputs/reference/TSQM-9 scoring.pdf`
-- `inputs/reference/sample-tsqm-v-ii_united-states_english.pdf`
-
 ## Run Order
 
 `scripts/run_all.R` runs these scripts in order:
@@ -60,10 +42,10 @@ Reference files used for scoring and quality control:
    - reduces same-day Fitabase weights to one daily value
    - uses the first weight on or after consent as baseline
    - assigns M1-M4 to 30, 60, 90, and 120 days from baseline using a +/-15-day first pass and an ordered closest-unassigned fallback pass
-   - creates Fitabase-derived wide, long, audit, and flowchart files in `output/weight_log_assignment/`
+   - creates Fitabase wide, long, audit, and flowchart files in `output/weight_log_assignment/`
 
 2. `scripts/02_build_analysis_data.R`
-   - reads the questionnaire workbook, legacy weight workbook, Fitabase-derived weight assignments, and pre-cessation GLP-1 weight-loss workbook
+   - reads the questionnaire workbook, legacy weight workbook, Fitabase weight assignments, and pre-cessation GLP-1 weight-loss workbook
    - scores PDQ, PHQ, Mini-EAT, TAPQ, and TSQM-II
    - creates analysis datasets in `output/data/`
    - creates Step-02 quality-control checks in `output/qa/`
@@ -106,7 +88,7 @@ The pipeline creates files under `output/`. This folder is excluded from Git bec
 
 Main output folders:
 
-- `output/data/`: analysis datasets and model outputs used by downstream tables and figures
+- `output/data/`: analysis datasets and model outputs used in tables and figures
 - `output/tables/`: main manuscript and supplement DOCX tables
 - `output/tables/supporting files/`: table CSV exports, model-detail PDFs, and table PNGs
 - `output/pub plots/`: manuscript figure files
@@ -128,7 +110,7 @@ Main manuscript outputs:
 ## Analysis Notes
 
 - Mini-EAT uses the raw dictionary field meanings: `me4/fu_me4 -> fish`, `me5/fu_me5 -> whole grains`, and `me6/fu_me6 -> refined grains`.
-- The pipeline creates `output/data/weight_long.csv` from the Fitabase assignment files and keeps the older workbook-derived longitudinal weight file as `output/data/weight_long_workbook_legacy.csv`.
+- The pipeline creates `output/data/weight_long.csv` from the Fitabase assignment files and keeps the older workbook-based longitudinal weight file as `output/data/weight_long_workbook_legacy.csv`.
 - The pipeline creates `output/data/glp1_weight_loss.csv` from `inputs/raw/Weight loss while on GLP1.xlsx` and joins the GLP-1 weight-loss fields into both `baseline_analysis.csv` and `weight_long.csv`.
 - `glp1_weight_loss.csv` preserves source percent loss, recalculated percent loss from pre/post pounds, and the final percent-loss field used by the sensitivity model.
 - The observed weight trajectory figure and formal observed-weight table both use participants with baseline weight plus at least one post-baseline weight.
