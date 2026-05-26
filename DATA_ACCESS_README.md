@@ -1,8 +1,6 @@
 # Data Access
 
-This repository does not include study data or scoring documents.
-
-Study files are protected and not public. This repository contains code and documentation only.
+Study data and scoring documents are protected and not included here. Only code, documentation, and empty input folders are included.
 
 Required local files:
 

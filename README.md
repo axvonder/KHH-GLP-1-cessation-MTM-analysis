@@ -1,6 +1,6 @@
 # GLP-1 Cessation Support Study Analytic Pipeline
 
-This repository contains the R analysis code for the manuscript **"Piloting strategies to curtail weight gain after GLP-1 agonist therapy cessation"**.
+This is the R analysis code for the manuscript **"Piloting strategies to curtail weight gain after GLP-1 agonist therapy cessation"**.
 
 The study was a pilot randomized trial evaluating usual care, Noom, and medically tailored meals after GLP-1 receptor agonist cessation. The first author is **Kelseanna Hollis-Hansen, PhD, MPH**.
 
@@ -8,11 +8,11 @@ The code builds analytic datasets, estimates models, produces manuscript tables 
 
 ## Data Access Required
 
-Study data and scoring documents are not included. They are required to run the pipeline. See [DATA_ACCESS_README.md](DATA_ACCESS_README.md) before running the code.
+Study data and scoring documents are protected and not included here. They are required to run the pipeline. See [DATA_ACCESS_README.md](DATA_ACCESS_README.md) before running the code.
 
 ## Run
 
-From the repository root:
+From the project root:
 
 ```bash
 Rscript scripts/run_all.R

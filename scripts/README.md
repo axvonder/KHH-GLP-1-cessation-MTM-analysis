@@ -1,6 +1,6 @@
 # Scripts
 
-Run the pipeline from the repository root:
+Run the pipeline from the project root:
 
 ```bash
 Rscript scripts/run_all.R
