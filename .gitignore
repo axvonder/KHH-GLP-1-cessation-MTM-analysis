@@ -21,10 +21,10 @@ rendered_*/
 /*.pdf
 
 # Generated pipeline outputs
-/analytic pipeline/output/
+/output/
 
 # Inputs are supplied locally; keep only the folder structure in Git
-/analytic pipeline/inputs/raw/*
-!/analytic pipeline/inputs/raw/.gitkeep
-/analytic pipeline/inputs/reference/*
-!/analytic pipeline/inputs/reference/.gitkeep
+/inputs/raw/*
+!/inputs/raw/.gitkeep
+/inputs/reference/*
+!/inputs/reference/.gitkeep

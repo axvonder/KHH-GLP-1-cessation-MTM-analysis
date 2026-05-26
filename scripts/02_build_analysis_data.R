@@ -50,7 +50,7 @@ questionnaire_file <- file.path(input_dir, "raw", "GLP1 Cessation Support Study 
 weight_file <- file.path(input_dir, "raw", "Weight and BMI.xlsx")
 glp1_weight_loss_candidates <- c(
   file.path(input_dir, "raw", "Weight loss while on GLP1.xlsx"),
-  file.path(dirname(pipeline_dir), "Weight loss while on GLP1.xlsx")
+  file.path(pipeline_dir, "Weight loss while on GLP1.xlsx")
 )
 glp1_weight_loss_file <- glp1_weight_loss_candidates[file.exists(glp1_weight_loss_candidates)][1]
 mini_eat_map_file <- file.path(input_dir, "reference", "MiniEAT user data to model mapping 11-2023.csv")
@@ -63,7 +63,7 @@ if (!file.exists(fitabase_weight_long_file)) {
   stop("Could not find fitabase_assigned_weight_long.csv. Run scripts/00_make_fitabase_with_manual_imputations.R and scripts/01_make_fitabase_assigned_weight_dataset.R first.")
 }
 if (is.na(glp1_weight_loss_file) || !file.exists(glp1_weight_loss_file)) {
-  stop("Could not find Weight loss while on GLP1.xlsx in the project root or analytic pipeline/inputs/raw.")
+  stop("Could not find Weight loss while on GLP1.xlsx in the project root or inputs/raw.")
 }
 stopifnot(file.exists(mini_eat_map_file))
 

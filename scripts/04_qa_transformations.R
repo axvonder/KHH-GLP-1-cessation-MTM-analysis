@@ -51,7 +51,7 @@ questionnaire_file <- file.path(input_dir, "raw", "GLP1 Cessation Support Study 
 weight_file <- file.path(input_dir, "raw", "Weight and BMI.xlsx")
 glp1_weight_loss_candidates <- c(
   file.path(input_dir, "raw", "Weight loss while on GLP1.xlsx"),
-  file.path(dirname(pipeline_dir), "Weight loss while on GLP1.xlsx")
+  file.path(pipeline_dir, "Weight loss while on GLP1.xlsx")
 )
 glp1_weight_loss_file <- glp1_weight_loss_candidates[file.exists(glp1_weight_loss_candidates)][1]
 
@@ -66,7 +66,7 @@ fitabase_assigned_weight_long_file <- file.path(weight_assignment_dir, "fitabase
 stopifnot(file.exists(questionnaire_file))
 stopifnot(file.exists(weight_file))
 if (is.na(glp1_weight_loss_file) || !file.exists(glp1_weight_loss_file)) {
-  stop("Could not find Weight loss while on GLP1.xlsx in the project root or analytic pipeline/inputs/raw.")
+  stop("Could not find Weight loss while on GLP1.xlsx in the project root or inputs/raw.")
 }
 stopifnot(file.exists(participants_file))
 stopifnot(file.exists(glp1_weight_loss_output_file))

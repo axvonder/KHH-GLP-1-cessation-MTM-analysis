@@ -75,12 +75,11 @@ format_fitabase_date <- function(date) {
 # Pipeline paths.
 script_path <- resolve_script_path()
 pipeline_dir <- dirname(dirname(script_path))
-project_dir <- dirname(pipeline_dir)
 sidecar_dir <- file.path(pipeline_dir, "output", "weight_log_assignment")
 dir.create(sidecar_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Inputs.
-fitabase_file <- file.path(project_dir, "weightLogInfo_merged.csv")
+fitabase_file <- file.path(pipeline_dir, "weightLogInfo_merged.csv")
 weight_workbook_file <- file.path(pipeline_dir, "inputs", "raw", "Weight and BMI.xlsx")
 
 # Required inputs.
