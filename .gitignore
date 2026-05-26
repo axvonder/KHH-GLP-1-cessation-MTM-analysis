@@ -1,0 +1,30 @@
+# macOS and Office scratch files
+.DS_Store
+**/.DS_Store
+~$*
+*.tmp
+*.bak
+*.log
+.Rhistory
+.RData
+.Rproj.user/
+
+# Temporary visual-QA render folders
+rendered_*/
+**/rendered_*/
+
+# Protected study data and local source/reference documents
+/*.csv
+/*.xlsx
+/*.xls
+/*.docx
+/*.pdf
+
+# Generated pipeline outputs
+/analytic pipeline/output/
+
+# Inputs are supplied locally; keep only the folder structure in Git
+/analytic pipeline/inputs/raw/*
+!/analytic pipeline/inputs/raw/.gitkeep
+/analytic pipeline/inputs/reference/*
+!/analytic pipeline/inputs/reference/.gitkeep
