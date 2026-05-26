@@ -1,20 +1,28 @@
-# Analytic Pipeline
+# GLP-1 Cessation Support Study Analytic Pipeline
 
-This repository contains the reproducible analytic pipeline for the manuscript tables, publication-style figures, model diagnostics, and QA reports.
+This repository contains the analytic code for the manuscript **"Piloting strategies to curtail weight gain after GLP-1 agonist therapy cessation"**.
+
+The study is a pilot randomized trial evaluating strategies to mitigate early weight gain after GLP-1 receptor agonist cessation. Participants were randomized to usual care, a digital behavioral support program, or medically tailored meals. The first author is **Kelseanna Hollis-Hansen, PhD, MPH**.
+
+This code rebuilds the analysis datasets, manuscript tables, publication-style figures, model diagnostics, and QA reports used for the manuscript.
+
+## Data Access Required
+
+This repository does **not** include participant-level data, raw study-source files, scoring references, or generated outputs derived from protected inputs.
+
+Those files are required to run the pipeline. Approved study-team users must place the protected files in the expected local paths before running anything below. See [DATA_ACCESS_README.md](DATA_ACCESS_README.md) for the required file list and data-access note.
 
 ## Run
 
-Most users should run the full pipeline rather than individual scripts:
+Run the full pipeline from the repository root:
 
 ```bash
 Rscript scripts/run_all.R
 ```
 
-`run_all.R` executes the full pipeline in order and stops immediately if any step fails.
+`scripts/run_all.R` executes every step in order and stops immediately if any step fails.
 
-Generated files are written under `output/`, except protected inputs, which must be supplied separately by approved study-team users. See `DATA_ACCESS_README.md`.
-
-## Requirements
+## Software Requirements
 
 The pipeline was last verified with R 4.5.1. Required R packages are:
 
@@ -22,9 +30,7 @@ The pipeline was last verified with R 4.5.1. Required R packages are:
 
 `webshot2`, `magick`, and `ragg` are used when available for image export.
 
-## Inputs
-
-No data files are distributed with this repository. The paths below document the local files required to reproduce the analysis after appropriate data access has been granted.
+## Expected Input Locations
 
 Raw data:
 
@@ -95,7 +101,11 @@ Support scripts:
 
 - `scripts/08_make_weight_observed_trajectory_plot.R` and `scripts/09_make_compact_model_contrasts_forest.R` are called by Step 06.
 
-## Output Folders
+## Generated Outputs
+
+Generated files are written under `output/`, which is excluded from Git because outputs are derived from protected inputs.
+
+Main output folders:
 
 - `output/data/`: cleaned datasets and model outputs used by downstream tables/figures
 - `output/tables/`: main manuscript and supplement DOCX tables
@@ -105,38 +115,21 @@ Support scripts:
 - `output/qa/`: QA reports and companion CSV checks
 - `output/weight_log_assignment/`: Fitabase assignment sidecar, audit files, and flowchart used to build the main longitudinal weight dataset
 
-## Main Outputs
-
-Tables:
+Main manuscript outputs:
 
 - `output/tables/Table 1 - Baseline Characteristics.docx`
 - `output/tables/Table 2 - Model-Based Outcomes.docx`
 - `output/tables/SI Table 1 - Weight Sensitivity Analysis.docx`
 - `output/tables/SI Table 2 - Observed Weight by Month.docx`
-- supporting table CSVs, model-detail PDFs, and PNGs are in `output/tables/supporting files/`
-
-Publication-style figures:
-
 - `output/pub plots/figure_1_weight_trajectories.pdf`
 - `output/pub plots/figure_1_weight_trajectories.png`
 - `output/pub plots/figure_2_compact_model_contrasts_forest.pdf`
 - `output/pub plots/figure_2_compact_model_contrasts_forest.png`
 
-QA reports:
-
-- `output/qa/qa_transformation_audit.pdf`
-- `output/qa/qa_score_audit.pdf`
-
-## Notes
+## Analysis Notes
 
 - Mini-EAT uses the raw dictionary field meanings: `me4/fu_me4 -> fish`, `me5/fu_me5 -> whole grains`, and `me6/fu_me6 -> refined grains`.
 - The main pipeline writes `output/data/weight_long.csv` from the Fitabase-derived assignment sidecar; it writes the older workbook-derived longitudinal weight file separately as `output/data/weight_long_workbook_legacy.csv`.
 - The pipeline writes `output/data/glp1_weight_loss.csv` from `inputs/raw/Weight loss while on GLP1.xlsx` and joins the GLP-1 weight-loss fields into both `baseline_analysis.csv` and `weight_long.csv`.
 - `glp1_weight_loss.csv` preserves source percent loss, recalculated percent loss from pre/post pounds, and the final percent-loss field used by the sensitivity model.
-- The formal GLP-1 weight-loss sensitivity analysis compares the primary weight model with a complete-case primary model and a complete-case model adjusted for percent weight loss while on GLP-1, reporting both model-based Month 4 total change and monthly slope.
-- To append PI-confirmed manual scale-photo entries to the merged Fitabase export, run `Rscript scripts/00_make_fitabase_with_manual_imputations.R`; it writes `output/weight_log_assignment/fitabase_with_imputations.csv` and an audit file.
-- To build the current Fitabase-derived baseline/M1-M4 sidecar, run `Rscript scripts/01_make_fitabase_assigned_weight_dataset.R`; it uses the first weight on/after consent as baseline, assigns M1-M4 to 30/60/90/120 days from baseline, uses a +/-15-day first pass plus an ordered closest-unassigned fallback pass, and writes wide/long assignment files plus `figure_fitabase_assigned_weight_flowchart.*` to `output/weight_log_assignment/`.
-- The observed weight trajectory figure uses participants with baseline weight plus at least one post-baseline weight.
-- The formal observed-weight table uses participants with baseline weight plus at least one post-baseline weight as arm denominators.
-- The QA comparison CSVs verify that the observed-weight figure and formal observed-weight table use matching summary values.
-- The root `.gitignore` keeps raw data, generated outputs, Office lock files, `.DS_Store`, and `rendered_*` QA scratch folders out of Git by default.
+- The observed weight trajectory figure and formal observed-weight table both use participants with baseline weight plus at least one post-baseline weight.
