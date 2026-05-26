@@ -1,8 +1,8 @@
 # Data Access
 
-This repository does not include study data.
+This repository does not include study data or scoring documents.
 
-The analysis uses participant-level and study-source files that are protected and not approved for public release. The public GitHub repository contains analytic code, documentation, and empty input-folder placeholders only.
+Study files are protected and not public. This repository contains code and documentation only.
 
 Required local files:
 
