@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Compact stacked forest plot of model-based contrasts vs Control.
-# One row per outcome; Noom and MTM contrasts are color-dodged within row.
+# One row per outcome; the Wellness Application and MTM contrasts are color-dodged within row.
 
 suppressPackageStartupMessages({
   library(dplyr)
@@ -56,6 +56,11 @@ stopifnot(all(file.exists(required_files)))
 
 arm_palette <- c("Noom" = "#2E7D32", "MTM" = "#E68613")
 contrast_levels <- c("Noom vs Control", "MTM vs Control")
+arm_display_labels <- c("Noom" = "Wellness Application", "MTM" = "MTM")
+
+display_arm_label <- function(x) {
+  ifelse(as.character(x) == "Noom", arm_display_labels[["Noom"]], as.character(x))
+}
 
 save_plot_high_res <- function(plot_object, stem, width = 8.7, height = 7.9, dpi = 900) {
   ggsave(
@@ -217,7 +222,7 @@ make_stacked_section <- function(
   x_lab,
   show_x_title = TRUE,
   left_direction = "Favors Control",
-  right_direction = "Favors Noom/MTM",
+  right_direction = "Favors Wellness Application/MTM",
   section_height = 1
 ) {
   plot_data <- data %>%
@@ -226,7 +231,6 @@ make_stacked_section <- function(
 
   section_limit <- max(abs(c(plot_data$lower, plot_data$upper)), na.rm = TRUE) * 1.10
   section_breaks <- pretty(c(-section_limit, section_limit), n = 5)
-  label_x <- section_limit * 1.05
   bottom_outcome <- levels(plot_data$outcome)[1]
   y_expand_lower <- 0.78
   y_expand_upper <- 0.35
@@ -238,8 +242,8 @@ make_stacked_section <- function(
   estimate_labels <- plot_data %>%
     mutate(
       label = paste0(
-        as.character(arm),
-        ": Diff = ",
+        display_arm_label(arm),
+        ": ",
         formatC(estimate, digits = 2, format = "f"),
         " (",
         formatC(lower, digits = 2, format = "f"),
@@ -247,7 +251,7 @@ make_stacked_section <- function(
         formatC(upper, digits = 2, format = "f"),
         ")"
       ),
-      label_x = label_x
+      label_x = section_limit * 1.88
     )
 
   direction_labels <- tibble(
@@ -282,7 +286,7 @@ make_stacked_section <- function(
       aes(x = label_x, y = outcome, label = label, group = arm),
       position = dodge,
       inherit.aes = FALSE,
-      hjust = 0,
+      hjust = 1,
       size = 2.25,
       color = "#4A4A4A",
       label.padding = unit(0.08, "lines"),
@@ -299,9 +303,13 @@ make_stacked_section <- function(
       fontface = "italic",
       vjust = 0
     ) +
-    scale_color_manual(values = arm_palette, breaks = c("Noom", "MTM")) +
+    scale_color_manual(
+      values = arm_palette,
+      breaks = c("Noom", "MTM"),
+      labels = unname(arm_display_labels[c("Noom", "MTM")])
+    ) +
     scale_x_continuous(
-      limits = c(-section_limit, section_limit * 1.60),
+      limits = c(-section_limit, section_limit * 1.95),
       breaks = section_breaks,
       labels = format_axis_ticks
     ) +
@@ -335,7 +343,7 @@ weight_plot <- make_stacked_section(
   outcome_order = c("Weight change total", "Weight change slope"),
   x_lab = "Difference vs Control",
   show_x_title = FALSE,
-  left_direction = "Favors Noom/MTM",
+  left_direction = "Favors Wellness Application/MTM",
   right_direction = "Favors Control",
   section_height = 1.35
 )
@@ -353,7 +361,7 @@ pdq_phq_plot <- make_stacked_section(
   outcome_order = c("PDQ", "PHQ"),
   x_lab = "Difference vs Control",
   show_x_title = FALSE,
-  left_direction = "Favors Noom/MTM",
+  left_direction = "Favors Wellness Application/MTM",
   right_direction = "Favors Control",
   section_height = 1.32
 )

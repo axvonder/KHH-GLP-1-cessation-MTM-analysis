@@ -50,7 +50,12 @@ required_files <- c(weight_long_file, weight_model_means_file)
 stopifnot(all(file.exists(required_files)))
 
 arm_levels <- c("Control", "Noom", "MTM")
+noom_display_label <- "Wellness Application"
 tol <- 1e-8
+
+display_arm_label <- function(x) {
+  ifelse(as.character(x) == "Noom", noom_display_label, as.character(x))
+}
 
 safe_mean <- function(x) {
   if (all(is.na(x))) NA_real_ else mean(x, na.rm = TRUE)
@@ -425,8 +430,14 @@ stopifnot(all(plot_vs_observed_table$status == "PASS"))
 stopifnot(all(plot_vs_formal_table$status == "PASS"))
 
 # Write reproducible weight tables and QA companions.
-write_csv(all_participant_summary, file.path(table_support_dir, "Observed Weight by Month - All Participants.csv"))
-write_csv(observed_trajectory_table, file.path(table_support_dir, "Observed Weight by Month - Model Eligible.csv"))
+write_csv(
+  all_participant_summary %>% mutate(arm = display_arm_label(arm)),
+  file.path(table_support_dir, "Observed Weight by Month - All Participants.csv")
+)
+write_csv(
+  observed_trajectory_table %>% mutate(arm = display_arm_label(arm)),
+  file.path(table_support_dir, "Observed Weight by Month - Model Eligible.csv")
+)
 write_csv(participant_status_csv, file.path(qa_dir, "qa_weight_participant_month_missingness_status.csv"))
 write_csv(eligibility_csv, file.path(qa_dir, "qa_observed_weight_trajectory_eligibility.csv"))
 write_csv(observed_arm_month_summary, file.path(qa_dir, "qa_observed_weight_trajectory_arm_month_summary.csv"))
@@ -437,7 +448,7 @@ write_csv(plot_vs_observed_table, file.path(qa_dir, "qa_weight_plot_vs_observed_
 write_csv(plot_vs_formal_table, file.path(qa_dir, "qa_weight_plot_vs_formal_table_comparison.csv"))
 display_table_for_csv <- formal_table_summary %>%
   transmute(
-    Arm = as.character(arm),
+    Arm = display_arm_label(arm),
     Month = month_label,
     `Observed weight, n/N` = paste0(weight_observed_n, "/", participants_eligible_for_observed_trajectory),
     `Missing weight, n (%)` = fmt_n_pct(weight_missing_n, weight_missing_pct),
@@ -448,8 +459,9 @@ display_table_for_csv <- formal_table_summary %>%
 
 display_table <- bind_rows(lapply(seq_along(arm_levels), function(i) {
   arm_name <- arm_levels[i]
+  arm_label <- display_arm_label(arm_name)
   arm_rows <- display_table_for_csv %>%
-    filter(Arm == arm_name) %>%
+    filter(Arm == arm_label) %>%
     mutate(Arm = if_else(row_number() == 1L, Arm, ""))
 
   if (i < length(arm_levels)) {
@@ -479,7 +491,7 @@ weight_summary_ft <- flextable(display_table) %>%
   bold(i = group_rows, j = "Arm", bold = TRUE, part = "body") %>%
   height(i = spacer_rows, height = 0.10, part = "body") %>%
   padding(i = spacer_rows, padding.top = 3, padding.bottom = 3, padding.left = 4, padding.right = 4, part = "body") %>%
-  width(j = "Arm", width = 0.78) %>%
+  width(j = "Arm", width = 1.30) %>%
   width(j = "Month", width = 0.78) %>%
   width(j = "Observed weight, n/N", width = 1.05) %>%
   width(j = "Missing weight, n (%)", width = 1.15) %>%

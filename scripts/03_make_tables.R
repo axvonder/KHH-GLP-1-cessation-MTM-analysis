@@ -69,6 +69,20 @@ stopifnot(file.exists(baseline_file))
 
 # Arm order.
 arm_levels <- c("Control", "Noom", "MTM")
+noom_display_label <- "Wellness Application"
+
+display_noom_text <- function(x) {
+  stringr::str_replace_all(x, "Noom", noom_display_label)
+}
+
+display_arm_label <- function(x) {
+  display_noom_text(as.character(x))
+}
+
+rename_noom_display_columns <- function(df) {
+  names(df) <- display_noom_text(names(df))
+  df
+}
 
 # Formatting helpers.
 format_number <- function(x, digits = 2) {
@@ -893,7 +907,7 @@ save_weight_diagnostics(weight_model_glp1_adjusted, file.path(diagnostic_dir, "w
 
 mini_terms <- c(
   "(Intercept)" = "Intercept",
-  "armNoom" = "Noom vs Control",
+  "armNoom" = display_noom_text("Noom vs Control"),
   "armMTM" = "MTM vs Control",
   "baseline_mini_eat_score" = "Baseline Mini-EAT"
 )
@@ -940,10 +954,10 @@ weight_fixed_pdf <- weight_fixed_effects %>%
     Term = dplyr::recode(
       term,
       "(Intercept)" = "Intercept",
-      "armNoom" = "Noom vs Control",
+      "armNoom" = display_noom_text("Noom vs Control"),
       "armMTM" = "MTM vs Control",
       "month_since_baseline" = "Month since baseline",
-      "armNoom:month_since_baseline" = "Noom x month since baseline",
+      "armNoom:month_since_baseline" = display_noom_text("Noom x month since baseline"),
       "armMTM:month_since_baseline" = "MTM x month since baseline"
     ),
     `B` = format_number(estimate),
@@ -957,7 +971,7 @@ weight_fixed_pdf <- weight_fixed_effects %>%
 derived_slope_pdf <- weight_slopes %>%
   filter(arm != "Control") %>%
   transmute(
-    Term = paste0(as.character(arm), " month since baseline"),
+    Term = paste0(display_arm_label(arm), " month since baseline"),
     `B` = format_number(month_since_baseline.trend),
     `SE` = format_number(SE),
     `95\\% CI` = paste0(format_number(lower.CL), " to ", format_number(upper.CL)),
@@ -999,14 +1013,14 @@ write_pdf_from_tex(weight_tex, file.path(table_support_dir, "Model Detail - Weig
 
 pdq_terms <- c(
   "(Intercept)" = "Intercept",
-  "armNoom" = "Noom vs Control",
+  "armNoom" = display_noom_text("Noom vs Control"),
   "armMTM" = "MTM vs Control",
   "baseline_pdq" = "Baseline PDQ"
 )
 
 phq_terms <- c(
   "(Intercept)" = "Intercept",
-  "armNoom" = "Noom vs Control",
+  "armNoom" = display_noom_text("Noom vs Control"),
   "armMTM" = "MTM vs Control",
   "baseline_phq" = "Baseline PHQ"
 )
@@ -1033,7 +1047,7 @@ write_pdf_from_tex(pdq_phq_tex, file.path(table_support_dir, "Model Detail - PDQ
 
 followup_terms <- c(
   "(Intercept)" = "Intercept",
-  "armNoom" = "Noom vs Control",
+  "armNoom" = display_noom_text("Noom vs Control"),
   "armMTM" = "MTM vs Control"
 )
 
@@ -1209,7 +1223,7 @@ table_1_ft <- flextable(table_1_df, col_keys = c("characteristic", "Control", "N
     j = "Noom",
     part = "header",
     value = as_paragraph(
-      header_chunk("Noom", size = 9, bold = TRUE),
+      header_chunk(noom_display_label, size = 9, bold = TRUE),
       header_linebreak(),
       header_chunk(sprintf("(n = %d)", arm_n$n[arm_n$arm == "Noom"]), size = 9, bold = FALSE)
     )
@@ -1236,7 +1250,12 @@ table_1_ft <- flextable(table_1_df, col_keys = c("characteristic", "Control", "N
   )
 
 # Write CSV + DOCX.
-readr::write_csv(table_1_df %>% select(-row_type), file.path(table_support_dir, "Table 1 - Baseline Characteristics.csv"))
+readr::write_csv(
+  table_1_df %>%
+    select(-row_type) %>%
+    rename_noom_display_columns(),
+  file.path(table_support_dir, "Table 1 - Baseline Characteristics.csv")
+)
 
 # Table 1 fits in portrait.
 portrait_section <- prop_section(
@@ -1514,7 +1533,7 @@ table_2_ft <- flextable(
     j = "Noom",
     part = "header",
     value = as_paragraph(
-      header_chunk("Noom", size = 8.0, bold = TRUE),
+      header_chunk(noom_display_label, size = 8.0, bold = TRUE),
       header_linebreak(),
       header_chunk("Estimate", size = 8.0, bold = TRUE),
       header_linebreak(),
@@ -1538,7 +1557,7 @@ table_2_ft <- flextable(
     j = "Noom vs Control",
     part = "header",
     value = as_paragraph(
-      header_chunk("Noom vs Control", size = 8.0, bold = TRUE),
+      header_chunk(display_noom_text("Noom vs Control"), size = 8.0, bold = TRUE),
       header_linebreak(),
       header_chunk("Difference", size = 8.0, bold = TRUE),
       header_linebreak(),
@@ -1660,7 +1679,8 @@ weight_sensitivity_table_display <- weight_sensitivity_table_rows %>%
       Model == "GLP-1 + baseline weight" ~ paste0("GLP-1 + baseline weight", "\u2074"),
       TRUE ~ Model
     )
-  )
+  ) %>%
+  rename_noom_display_columns()
 
 readr::write_csv(weight_sensitivity_table_display, file.path(table_support_dir, "SI Table 1 - Weight Sensitivity Analysis.csv"))
 
@@ -1742,7 +1762,7 @@ weight_sensitivity_ft <- flextable(
     j = "Noom",
     part = "header",
     value = as_paragraph(
-      header_chunk("Noom", size = 7.3, bold = TRUE),
+      header_chunk(noom_display_label, size = 7.3, bold = TRUE),
       header_linebreak(),
       header_chunk("Estimate", size = 7.3, bold = TRUE),
       header_linebreak(),
@@ -1766,7 +1786,7 @@ weight_sensitivity_ft <- flextable(
     j = "Noom vs Control",
     part = "header",
     value = as_paragraph(
-      header_chunk("Noom vs Control", size = 7.3, bold = TRUE),
+      header_chunk(display_noom_text("Noom vs Control"), size = 7.3, bold = TRUE),
       header_linebreak(),
       header_chunk("Difference (95% CI); P", size = 7.3, bold = FALSE)
     )
@@ -1838,7 +1858,12 @@ write_table_docx(
 )
 
 # Write main Table 2 CSV + DOCX.
-readr::write_csv(table_2_rows %>% select(-is_group), file.path(table_support_dir, "Table 2 - Model-Based Outcomes.csv"))
+readr::write_csv(
+  table_2_rows %>%
+    select(-is_group) %>%
+    rename_noom_display_columns(),
+  file.path(table_support_dir, "Table 2 - Model-Based Outcomes.csv")
+)
 
 write_table_docx(
   ft = table_2_ft,

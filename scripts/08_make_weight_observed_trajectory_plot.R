@@ -40,6 +40,7 @@ stopifnot(all(file.exists(required_files)))
 
 arm_levels <- c("Control", "Noom", "MTM")
 arm_palette <- c("Control" = "#7A7A7A", "Noom" = "#2E7D32", "MTM" = "#E68613")
+arm_display_labels <- c("Control" = "Control", "Noom" = "Wellness Application", "MTM" = "MTM")
 
 save_plot_high_res <- function(plot_object, stem, width = 7.2, height = 4.4, dpi = 900) {
   ggsave(
@@ -189,7 +190,11 @@ observed_weight_trajectory_plot <- ggplot() +
     limits = y_limits,
     expand = expansion(mult = c(0, 0.02))
   ) +
-  scale_color_manual(values = arm_palette, breaks = arm_levels) +
+  scale_color_manual(
+    values = arm_palette,
+    breaks = arm_levels,
+    labels = unname(arm_display_labels[arm_levels])
+  ) +
   labs(
     x = NULL,
     y = "Percent Body Weight Change (%)"
@@ -208,7 +213,7 @@ observed_weight_trajectory_plot <- ggplot() +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = 8.8),
-    legend.key.width = unit(0.42, "in"),
+    legend.key.width = unit(0.50, "in"),
     legend.margin = margin(t = 0),
     plot.margin = margin(8, 12, 4, 8)
   )
